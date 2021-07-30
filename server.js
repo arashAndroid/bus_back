@@ -28,6 +28,13 @@ db.sequelize.sync({ force: true }).then(() => {
 
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
+require('./app/routes/BasicInformation/bus.routes')(app);
+require('./app/routes/BasicInformation/busType.routes')(app);
+require('./app/routes/BasicInformation/city.routes')(app);
+require('./app/routes/BasicInformation/driver.routes')(app);
+require('./app/routes/BasicInformation/ticket.routes')(app);
+require('./app/routes/BasicInformation/travel.routes')(app);
+require('./app/routes/BasicInformation/user.routes')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8085;

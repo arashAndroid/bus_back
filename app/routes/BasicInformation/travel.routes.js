@@ -15,23 +15,28 @@ module.exports = function (app) {
   app.post(
     "/api/v1/Travel",
     CityController.create
+        [authJwt.verifyToken, authJwt.isAdmin],
   );
   app.get(
     "/api/v1/Travel",
     CityController.getAll
+        [authJwt.verifyToken, authJwt.isAdmin],
   );
   app.get(
     "/api/v1/Travel/:id",
     CityController.get
+        [authJwt.verifyToken, authJwt.isAdmin],
   );
   app.put(
     "/api/v1/Travel/:id",
     CityController.update
+        [authJwt.verifyToken, authJwt.isAdmin],
   );
 
   app.delete(
     "/api/v1/Travel/:id",
     CityController.delete
+        [authJwt.verifyToken, authJwt.isAdmin],
   );
 
   // app.delete(
