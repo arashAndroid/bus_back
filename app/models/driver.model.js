@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const Driver = sequelize.define("users", {
+    const Driver = sequelize.define("drivers", {
         firstName: {
             type: Sequelize.STRING
         },

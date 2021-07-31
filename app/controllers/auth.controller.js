@@ -2,6 +2,8 @@ const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
 const Role = db.role;
+const { TimeStampToDate } = require("../utils/TimeStampToDate");
+
 
 const Op = db.Sequelize.Op;
 
@@ -41,6 +43,7 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
+    let date = new Date();
     User.findOne({
         where: {
             username: req.body.username
@@ -74,10 +77,11 @@ exports.signin = (req, res) => {
                 }
                 res.status(200).send({
                     id: user.id,
-                    username: user.username,
+                    userName: user.username,
                     email: user.email,
                     roles: authorities,
-                    accessToken: token
+                    accessToken: token,
+                    accessTokenExpireTime: TimeStampToDate(date.setDate(date.getDate() + 30))
                 });
             });
         })

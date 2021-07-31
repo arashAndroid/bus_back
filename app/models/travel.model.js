@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const Travel = sequelize.define("travel", {
+    const Travel = sequelize.define("travels", {
         departureDatetime: {
             type: 'TIMESTAMP',
         },

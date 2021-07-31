@@ -14,29 +14,29 @@ module.exports = function (app) {
 
   app.post(
     "/api/v1/busType",
-    CityController.create
-        [authJwt.verifyToken, authJwt.isAdmin],
+    CityController.create,
+    [authJwt.verifyToken, authJwt.isAdmin],
   );
   app.get(
     "/api/v1/busType",
-    CityController.getAll
-        [authJwt.verifyToken, authJwt.isAdmin],
+    CityController.getAll,
+    [authJwt.verifyToken, authJwt.isAdmin],
   );
   app.get(
     "/api/v1/busType/:id",
-    CityController.get
-        [authJwt.verifyToken, authJwt.isAdmin],
+    CityController.get,
+    [authJwt.verifyToken, authJwt.isAdmin],
   );
   app.put(
     "/api/v1/busType/:id",
-    CityController.update
-        [authJwt.verifyToken, authJwt.isAdmin],
+    CityController.update,
+    [authJwt.verifyToken, authJwt.isAdmin],
   );
 
   app.delete(
     "/api/v1/busType/:id",
-    CityController.delete
-        [authJwt.verifyToken, authJwt.isAdmin],
+    CityController.delete,
+    [authJwt.verifyToken, authJwt.isAdmin],
   );
 
   // app.delete(
