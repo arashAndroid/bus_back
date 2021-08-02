@@ -76,12 +76,23 @@ exports.signin = (req, res) => {
                     authorities.push("ROLE_" + roles[i].name.toUpperCase());
                 }
                 res.status(200).send({
-                    id: user.id,
-                    userName: user.username,
-                    email: user.email,
-                    roles: authorities,
-                    accessToken: token,
-                    accessTokenExpireTime: TimeStampToDate(date.setDate(date.getDate() + 30))
+                    msg: "Login Successful",
+                    status: "200",
+                    data: {
+                        id: user.id,
+                        userName: user.username,
+                        email: user.email,
+                        first_name: user.username,
+                        fullname: user.username,
+                        last_name: user.username,
+                        national_code: user.username,
+                        credit: user.cash,
+                        roles: authorities,
+                        accessToken: token,
+                        gender: 1,
+                        accessTokenExpireTime: TimeStampToDate(date.setDate(date.getDate() + 30))
+                    }
+
                 });
             });
         })

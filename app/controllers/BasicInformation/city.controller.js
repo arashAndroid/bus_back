@@ -8,7 +8,7 @@ const Op = db.Sequelize.Op;
 
 
 exports.create = (req, res) => {
-  if (!req.body.name) {
+  if (!req.body.title) {
     res.status(400).send({
       Message: "عنوان شهر را وارد کنید"
     });
