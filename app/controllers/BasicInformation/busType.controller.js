@@ -8,7 +8,7 @@ const Op = db.Sequelize.Op;
 
 
 exports.create = (req, res) => {
-  if (!req.body.name) {
+  if (!req.body.title) {
     res.status(400).send({
       Message: "عنوان نوع اتوبوس را وارد کنید"
     });
@@ -36,8 +36,8 @@ exports.create = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-  const name = req.query.name;
-  var condition = name ? { name: { [Op.iLike]: `%${name}%` } } : null;
+  const title = req.query.title;
+  var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
   const provinceId = req.query.provinceId;
   if (provinceId) {
     if (condition) {
