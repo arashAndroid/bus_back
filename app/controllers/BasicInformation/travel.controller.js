@@ -1,13 +1,14 @@
 const db = require("../../models");
 const config = require("../../config/auth.config");
-const Travel = db.Travel;
+const Travel = db.travel;
 
 const Op = db.Sequelize.Op;
 
 exports.create = (req, res) => {
-  const Travel = req.body;
-  console.log("Travel", Travel);
-  Travel.create(Travel)
+  const travel = req.body;
+  console.log("Travel", travel);
+
+  Travel.create(travel)
     .then((data) => {
       res.status(200).send({
         Message: "سفر با موفقیت ایجاد شد",
@@ -43,10 +44,22 @@ exports.getAll = (req, res) => {
   }
   const departureDatetime = req.query.departureDatetime;
   if (departureDatetime) {
+    const dateStart = new Date(departureDatetime).setHours(0, 0, 0, 0);
+    const dateEnd = new Date(departureDatetime).setHours(23, 59, 59, 0);
+    console.log("dateStart ", dateStart);
+    console.log("dateEnd ", dateEnd);
     if (condition) {
-      condition.departureDatetime = departureDatetime;
+      condition.departureDatetime = {
+        [Op.gt]: dateStart,
+        [Op.lt]: dateEnd,
+      };
     } else {
-      condition = { departureDatetime: departureDatetime };
+      condition = {
+        departureDatetime: {
+          [Op.gt]: dateStart,
+          [Op.lt]: dateEnd,
+        },
+      };
     }
   }
 

@@ -23,7 +23,7 @@ exports.create = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-  Driver.findAll({ where: condition })
+  Driver.findAll()
     .then((data) => {
       res.status(200).send({
         Message: "تمامی راننده‌ها با موفقیت دریافت شدند",
