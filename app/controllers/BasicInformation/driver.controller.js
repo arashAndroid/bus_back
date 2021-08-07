@@ -5,13 +5,6 @@ const Driver = db.driver;
 const Op = db.Sequelize.Op;
 
 exports.create = (req, res) => {
-  if (!req.body.title) {
-    res.status(400).send({
-      Message: "عنوان راننده را وارد کنید",
-    });
-    return;
-  }
-
   const driver = req.body;
   console.log("driver", driver);
   Driver.create(driver)
@@ -30,17 +23,6 @@ exports.create = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
-  const provinceId = req.query.provinceId;
-  if (provinceId) {
-    if (condition) {
-      condition.provinceId = provinceId;
-    } else {
-      condition = { provinceId: provinceId };
-    }
-  }
-
   Driver.findAll({ where: condition })
     .then((data) => {
       res.status(200).send({

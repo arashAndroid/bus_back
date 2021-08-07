@@ -5,13 +5,6 @@ const Travel = db.Travel;
 const Op = db.Sequelize.Op;
 
 exports.create = (req, res) => {
-  if (!req.body.title) {
-    res.status(400).send({
-      Message: "عنوان سفر را وارد کنید",
-    });
-    return;
-  }
-
   const Travel = req.body;
   console.log("Travel", Travel);
   Travel.create(Travel)
