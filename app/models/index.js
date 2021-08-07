@@ -48,8 +48,10 @@ db.user.belongsToMany(db.role, {
 db.busType.hasMany(db.bus, { foreignKey: { allowNull: false }, onDelete: 'RESTRICT' });
 db.bus.belongsTo(db.busType);
 
-db.city.hasMany(db.travel, { foreignKey: { allowNull: false }, onDelete: 'RESTRICT' });
-db.travel.belongsTo(db.city);
+db.city.hasMany(db.travel, { foreignKey: 'destinationId', allowNull: false, onDelete: 'RESTRICT' });
+db.travel.belongsTo(db.city, { foreignKey: 'destinationId', allowNull: false, onDelete: 'RESTRICT' });
+db.city.hasMany(db.travel, { foreignKey: 'sourceId', allowNull: false, onDelete: 'RESTRICT' });
+db.travel.belongsTo(db.city, { foreignKey: 'sourceId', allowNull: false, onDelete: 'RESTRICT' });
 
 db.bus.hasMany(db.travel, { foreignKey: { allowNull: false }, onDelete: 'RESTRICT' });
 db.travel.belongsTo(db.bus);
