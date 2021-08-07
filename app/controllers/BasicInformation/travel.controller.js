@@ -32,12 +32,28 @@ exports.create = (req, res) => {
 exports.getAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
-  const provinceId = req.query.provinceId;
-  if (provinceId) {
+  const destinationId = req.query.destinationId;
+  if (destinationId) {
     if (condition) {
-      condition.provinceId = provinceId;
+      condition.destinationId = destinationId;
     } else {
-      condition = { provinceId: provinceId };
+      condition = { destinationId: destinationId };
+    }
+  }
+  const sourceId = req.query.sourceId;
+  if (sourceId) {
+    if (condition) {
+      condition.sourceId = sourceId;
+    } else {
+      condition = { sourceId: sourceId };
+    }
+  }
+  const departureDatetime = req.query.departureDatetime;
+  if (departureDatetime) {
+    if (condition) {
+      condition.departureDatetime = departureDatetime;
+    } else {
+      condition = { departureDatetime: departureDatetime };
     }
   }
 
