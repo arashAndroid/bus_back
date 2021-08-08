@@ -70,10 +70,12 @@ exports.getAll = (req, res) => {
   Travel.findAll({
     where: condition,
     include: [
-      { model: City },
-      { model: Bus, include: [{ model: BusType },] },
+      { model: City, as: "source" },
+      { model: City, as: "destination" },
+      { model: Bus, include: [{ model: BusType }] },
       { model: Driver },
-    ]
+    ],
+    order: [["departureDatetime", "ASC"]],
   })
     .then((data) => {
       res.status(200).send({
