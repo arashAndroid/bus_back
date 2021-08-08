@@ -1,6 +1,10 @@
 const db = require("../../models");
 const config = require("../../config/auth.config");
 const Travel = db.travel;
+const Bus = db.bus;
+const BusType = db.busType;
+const City = db.city;
+const Driver = db.driver;
 
 const Op = db.Sequelize.Op;
 
@@ -63,7 +67,14 @@ exports.getAll = (req, res) => {
     }
   }
 
-  Travel.findAll({ where: condition })
+  Travel.findAll({
+    where: condition,
+    include: [
+      { model: City },
+      { model: Bus, include: [{ model: BusType },] },
+      { model: Driver },
+    ]
+  })
     .then((data) => {
       res.status(200).send({
         Message: "تمامی راننده‌ها با موفقیت دریافت شدند",
