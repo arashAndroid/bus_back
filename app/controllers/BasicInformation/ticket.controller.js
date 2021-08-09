@@ -36,7 +36,7 @@ exports.create = (req, res) => {
           res.status(200).send({
             Message: "بلیط با موفقیت ایجاد شد",
             Status: 200,
-            Data: data,
+            Data: data[0],
           });
         })
         .catch((err) => {
