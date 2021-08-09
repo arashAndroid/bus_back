@@ -1,25 +1,55 @@
 const db = require("../../models");
 const config = require("../../config/auth.config");
 const Ticket = db.ticket;
+const Travel = db.travel;
+const Bus = db.bus;
+const BusType = db.busType;
+const City = db.city;
+const Driver = db.driver;
+const User = db.user;
 
 const Op = db.Sequelize.Op;
 
 exports.create = (req, res) => {
-  if (!req.body.title) {
-    res.status(400).send({
-      Message: "عنوان بلیط را وارد کنید",
-    });
-    return;
-  }
-
   const ticket = req.body;
   console.log("ticket", ticket);
   Ticket.create(ticket)
     .then((data) => {
-      res.status(200).send({
-        Message: "بلیط با موفقیت ایجاد شد",
-        Status: 201,
-      });
+      Ticket.findAll({
+        where: { id: data.id },
+        include: [
+          {
+            model: Travel,
+            include: [
+              { model: City, as: "source" },
+              { model: City, as: "destination" },
+              { model: Bus, include: [{ model: BusType }] },
+              { model: Driver },
+            ],
+          },
+          {
+            model: User,
+          },
+        ],
+      })
+        .then((data) => {
+          res.status(200).send({
+            Message: "بلیط با موفقیت ایجاد شد",
+            Status: 200,
+            Data: data,
+          });
+        })
+        .catch((err) => {
+          res.status(500).send({
+            Message: err.message || "خطای سرور",
+            Status: 500,
+          });
+        });
+      // res.status(200).send({
+      //   Message: "بلیط با موفقیت ایجاد شد",
+      //   Status: 201,
+      //   Data: data,
+      // });
     })
     .catch((err) => {
       res.status(500).send({
@@ -41,7 +71,23 @@ exports.getAll = (req, res) => {
     }
   }
 
-  Ticket.findAll({ where: condition })
+  Ticket.findAll({
+    where: condition,
+    include: [
+      {
+        model: Travel,
+        include: [
+          { model: City, as: "source" },
+          { model: City, as: "destination" },
+          { model: Bus, include: [{ model: BusType }] },
+          { model: Driver },
+        ],
+      },
+      {
+        model: User,
+      },
+    ],
+  })
     .then((data) => {
       res.status(200).send({
         Message: "تمامی راننده‌ها با موفقیت دریافت شدند",
