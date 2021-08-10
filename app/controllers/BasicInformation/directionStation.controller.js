@@ -1,23 +1,23 @@
 const db = require("../../models");
 const config = require("../../config/auth.config");
-const Travel = db.travel;
-const Bus = db.bus;
-const BusType = db.busType;
-const City = db.city;
-const Driver = db.driver;
+const DirectionStation = db.directionStation;
 
 const Op = db.Sequelize.Op;
-const { v1: uuidv1 } = require("uuid");
 
 exports.create = (req, res) => {
-  const travel = req.body;
-  console.log("Travel", travel);
-  travel.travelUID = uuidv1();
+  if (!req.body.title) {
+    res.status(400).send({
+      Message: "عنوان مسیر-ایستگاه را وارد کنید",
+    });
+    return;
+  }
 
-  Travel.create(travel)
+  const directionStation = req.body;
+  console.log("directionStation", directionStation);
+  DirectionStation.create(directionStation)
     .then((data) => {
       res.status(200).send({
-        Message: "سفر با موفقیت ایجاد شد",
+        Message: "مسیر-ایستگاه با موفقیت ایجاد شد",
         Status: 201,
       });
     })
@@ -28,60 +28,38 @@ exports.create = (req, res) => {
       });
     });
 };
+exports.bulkCreate = (req, res) => {
+  const directionStations = req.body;
+  console.log("directionStation", directionStations);
+  DirectionStation.bulkCreate(dataArray)
+    .then(() => {
+      return DirectionStation.findAll();
+    })
+    .then((directionStationsAll) => {
+      console.log(directionStationsAll);
+      res.status(200).send({
+        Message: "مسیر-ایستگاه‌ها با موفقیت ایجاد شدند",
+        Status: 201,
+      });
+    });
+};
 
 exports.getAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
-  const destinationId = req.query.destinationId;
-  if (destinationId) {
+  const provinceId = req.query.provinceId;
+  if (provinceId) {
     if (condition) {
-      condition.destinationId = destinationId;
+      condition.provinceId = provinceId;
     } else {
-      condition = { destinationId: destinationId };
-    }
-  }
-  const sourceId = req.query.sourceId;
-  if (sourceId) {
-    if (condition) {
-      condition.sourceId = sourceId;
-    } else {
-      condition = { sourceId: sourceId };
-    }
-  }
-  const departureDatetime = req.query.departureDatetime;
-  if (departureDatetime) {
-    const dateStart = new Date(departureDatetime).setHours(0, 0, 0, 0);
-    const dateEnd = new Date(departureDatetime).setHours(23, 59, 59, 0);
-    console.log("dateStart ", dateStart);
-    console.log("dateEnd ", dateEnd);
-    if (condition) {
-      condition.departureDatetime = {
-        [Op.gt]: dateStart,
-        [Op.lt]: dateEnd,
-      };
-    } else {
-      condition = {
-        departureDatetime: {
-          [Op.gt]: dateStart,
-          [Op.lt]: dateEnd,
-        },
-      };
+      condition = { provinceId: provinceId };
     }
   }
 
-  Travel.findAll({
-    where: condition,
-    include: [
-      { model: City, as: "source" },
-      { model: City, as: "destination" },
-      { model: Bus, include: [{ model: BusType }] },
-      { model: Driver },
-    ],
-    order: [["departureDatetime", "ASC"]],
-  })
+  DirectionStation.findAll({ where: condition })
     .then((data) => {
       res.status(200).send({
-        Message: "تمامی راننده‌ها با موفقیت دریافت شدند",
+        Message: "تمامی مسیر-ایستگاهها با موفقیت دریافت شدند",
         Status: 200,
         Data: data,
       });
@@ -97,17 +75,17 @@ exports.getAll = (req, res) => {
 exports.get = (req, res) => {
   const id = req.params.id;
 
-  Travel.findByPk(id)
+  DirectionStation.findByPk(id)
     .then((data) => {
       if (data != null) {
         res.status(200).send({
-          Message: "سفر با موفقیت دریافت شد",
+          Message: "مسیر-ایستگاه با موفقیت دریافت شد",
           Status: 200,
           Data: data,
         });
       } else {
         res.status(404).send({
-          Message: "سفر مورد نظر یافت نشد",
+          Message: "مسیر-ایستگاه مورد نظر یافت نشد",
           Status: 404,
         });
       }
@@ -122,20 +100,20 @@ exports.get = (req, res) => {
 
 exports.update = (req, res) => {
   const id = req.params.id;
-  const Travel = req.body;
+  const directionStation = req.body;
 
-  Travel.update(Travel, {
+  DirectionStation.update(directionStation, {
     where: { id: id },
   })
     .then((num) => {
       if (num == 1) {
         res.send({
-          Message: "سفر با موفقیت بروزرسانی شد",
+          Message: "مسیر-ایستگاه با موفقیت بروزرسانی شد",
           Status: 200,
         });
       } else {
         res.send({
-          Message: `سفر مورد نظر پیدا نشد`,
+          Message: `مسیر-ایستگاه مورد نظر پیدا نشد`,
           Status: 400,
         });
       }
@@ -151,18 +129,18 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Travel.destroy({
+  DirectionStation.destroy({
     where: { id: id },
   })
     .then((num) => {
       if (num == 1) {
         res.send({
-          Message: "سفر  با موفقیت حذف شد",
+          Message: "مسیر-ایستگاه  با موفقیت حذف شد",
           Status: 200,
         });
       } else {
         res.send({
-          message: `سفر مورد نظر پیدا نشد`,
+          message: `مسیر-ایستگاه مورد نظر پیدا نشد`,
         });
       }
     })
@@ -175,13 +153,13 @@ exports.delete = (req, res) => {
 };
 
 exports.deleteAll = (req, res) => {
-  Travel.destroy({
+  DirectionStation.destroy({
     where: {},
     truncate: false,
   })
     .then((nums) => {
       res.send({
-        Message: `${nums} سفر با موفقیت حذ شدند`,
+        Message: `${nums} مسیر-ایستگاه با موفقیت حذ شدند`,
         Status: 200,
       });
     })

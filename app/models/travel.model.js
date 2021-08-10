@@ -9,6 +9,9 @@ module.exports = (sequelize, Sequelize) => {
     status: {
       type: Sequelize.INTEGER,
     },
+    travelUID: {
+      type: Sequelize.STRING,
+    },
   });
 
   return Travel;

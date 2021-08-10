@@ -28,6 +28,11 @@ db.city = require("../models/city.model.js")(sequelize, Sequelize);
 db.ticket = require("../models/ticket.model.js")(sequelize, Sequelize);
 db.driver = require("../models/driver.model.js")(sequelize, Sequelize);
 db.travel = require("../models/travel.model.js")(sequelize, Sequelize);
+db.direction = require("../models/direction.model.js")(sequelize, Sequelize);
+db.directionStation = require("../models/directionStation.model.js")(
+  sequelize,
+  Sequelize
+);
 
 db.role.belongsToMany(db.user, {
   through: "user_roles",
@@ -45,6 +50,24 @@ db.busType.hasMany(db.bus, {
   onDelete: "RESTRICT",
 });
 db.bus.belongsTo(db.busType);
+
+db.direction.hasMany(db.directionStation, {
+  foreignKey: { allowNull: false },
+  onDelete: "RESTRICT",
+});
+db.directionStation.belongsTo(db.direction);
+
+db.direction.hasMany(db.travel, {
+  foreignKey: { allowNull: false },
+  onDelete: "RESTRICT",
+});
+db.travel.belongsTo(db.direction);
+
+db.city.hasMany(db.directionStation, {
+  foreignKey: { allowNull: false },
+  onDelete: "RESTRICT",
+});
+db.directionStation.belongsTo(db.city);
 
 db.city.hasMany(db.travel, {
   foreignKey: "destinationId",
