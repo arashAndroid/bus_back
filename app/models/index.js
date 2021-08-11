@@ -57,15 +57,21 @@ db.bus.belongsTo(db.busType);
 
 db.travel.hasMany(db.travelDetail, {
   foreignKey: { allowNull: false },
-  onDelete: "RESTRICT",
+  onDelete: "CASCADE",
 });
-db.travelDetail.belongsTo(db.travel);
+db.travelDetail.belongsTo(db.travel, {
+  foreignKey: { allowNull: false },
+  onDelete: "CASCADE",
+});
 
 db.direction.hasMany(db.directionDetail, {
   foreignKey: { allowNull: false },
-  onDelete: "RESTRICT",
+  onDelete: "CASCADE",
 });
-db.directionDetail.belongsTo(db.direction);
+db.directionDetail.belongsTo(db.direction, {
+  foreignKey: { allowNull: false },
+  onDelete: "CASCADE",
+});
 
 db.direction.hasMany(db.travel, {
   foreignKey: { allowNull: false },

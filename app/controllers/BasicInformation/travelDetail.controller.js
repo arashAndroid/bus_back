@@ -2,6 +2,7 @@ const db = require("../../models");
 const config = require("../../config/auth.config");
 const TravelDetail = db.travelDetail;
 const Travel = db.travel;
+const City = db.city;
 
 const Op = db.Sequelize.Op;
 
@@ -50,7 +51,14 @@ exports.getAll = (req, res) => {
     }
   }
 
-  TravelDetail.findAll({ where: condition, include: [{ model: Travel }] })
+  TravelDetail.findAll({
+    where: condition,
+    include: [
+      { model: Travel },
+      { model: City, as: "source" },
+      { model: City, as: "destination" },
+    ],
+  })
     .then((data) => {
       res.status(200).send({
         Message: "تمامی جزئیات-سفرها با موفقیت دریافت شدند",

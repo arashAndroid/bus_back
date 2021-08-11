@@ -12,17 +12,61 @@ const DirectionDetail = db.directionDetail;
 const Op = db.Sequelize.Op;
 const { v1: uuidv1 } = require("uuid");
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   const travel = req.body;
   console.log("Travel", travel);
-  travel.travelUID = uuidv1();
 
   Travel.create(travel)
-    .then((data) => {
-      res.status(200).send({
-        Message: "سفر با موفقیت ایجاد شد",
-        Status: 201,
-      });
+    .then((travelRes) => {
+      travelRes;
+      console.log("travelRes = ", travelRes);
+      DirectionDetail.findAll({
+        where: { directionId: travel.directionId },
+        order: [["order", "ASC"]],
+      })
+        .then(async (data) => {
+          for (let i = 0; i < data.length; i++) {
+            const source = data[i];
+            for (let j = i + 1; j < data.length; j++) {
+              const destination = data[j];
+              var price =
+                ((destination.distanceFromSource - source.distanceFromSource) /
+                  (data[data.length - 1].distanceFromSource -
+                    data[0].distanceFromSource)) *
+                travelRes.basePrice;
+              if (price < 0) {
+                price *= -1;
+              }
+              var travelDetail = {
+                travelId: travelRes.id,
+                status: 1,
+                sourceId: source.cityId,
+                destinationId: destination.cityId,
+                departureDatetime: source.arrivalTime,
+                price: price,
+              };
+              await TravelDetail.create(travelDetail);
+              // TravelDetail.create(travelDetail)
+              //   .then((data) => {})
+              //   .catch((err) => {
+              //     res.status(500).send({
+              //       Message: err.message || "خطای سرور",
+              //       Status: 500,
+              //     });
+              //   });
+            }
+          }
+          res.status(200).send({
+            Message: "سفر با موفقیت ایجاد شد",
+            Status: 201,
+          });
+        })
+        .catch((err) => {
+          res.status(500).send({
+            Message: err.message || "خطای سرور",
+            Status: 500,
+          });
+        });
     })
     .catch((err) => {
       res.status(500).send({
