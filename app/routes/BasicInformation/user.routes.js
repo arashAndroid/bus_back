@@ -10,34 +10,12 @@ module.exports = function (app) {
     next();
   });
 
+  app.post("/api/v1/user", CityController.create, [authJwt.verifyToken]);
+  app.get("/api/v1/user", CityController.getAll, [authJwt.verifyToken]);
+  app.get("/api/v1/user/:id", CityController.get, [authJwt.verifyToken]);
+  app.put("/api/v1/user/:id", CityController.update, [authJwt.verifyToken]);
 
-
-  app.post(
-    "/api/v1/user",
-    CityController.create,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
-  app.get(
-    "/api/v1/user",
-    CityController.getAll,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
-  app.get(
-    "/api/v1/user/:id",
-    CityController.get,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
-  app.put(
-    "/api/v1/user/:id",
-    CityController.update,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
-
-  app.delete(
-    "/api/v1/user/:id",
-    CityController.delete,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
+  app.delete("/api/v1/user/:id", CityController.delete, [authJwt.verifyToken]);
 
   // app.delete(
   //   "/api/v1/user",

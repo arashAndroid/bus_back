@@ -46,9 +46,6 @@ exports.signup = (req, res) => {
                 roles: authorities,
                 accessToken: token,
                 gender: 1,
-                accessTokenExpireTime: TimeStampToDate(
-                  date.setDate(date.getDate() + 30)
-                ),
               },
             });
           });

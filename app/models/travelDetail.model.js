@@ -1,9 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
-  const Travel = sequelize.define("travels", {
+  const TravelDetail = sequelize.define("travel_details", {
     departureDatetime: {
       type: Sequelize.DATE,
     },
-    basePrice: {
+    price: {
       type: Sequelize.INTEGER,
     },
     status: {
@@ -11,5 +11,5 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
-  return Travel;
+  return TravelDetail;
 };

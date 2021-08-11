@@ -28,8 +28,12 @@ db.city = require("../models/city.model.js")(sequelize, Sequelize);
 db.ticket = require("../models/ticket.model.js")(sequelize, Sequelize);
 db.driver = require("../models/driver.model.js")(sequelize, Sequelize);
 db.travel = require("../models/travel.model.js")(sequelize, Sequelize);
+db.travelDetail = require("../models/travelDetail.model.js")(
+  sequelize,
+  Sequelize
+);
 db.direction = require("../models/direction.model.js")(sequelize, Sequelize);
-db.directionStation = require("../models/directionStation.model.js")(
+db.directionDetail = require("./directionDetail.model.js")(
   sequelize,
   Sequelize
 );
@@ -51,11 +55,17 @@ db.busType.hasMany(db.bus, {
 });
 db.bus.belongsTo(db.busType);
 
-db.direction.hasMany(db.directionStation, {
+db.travel.hasMany(db.travelDetail, {
   foreignKey: { allowNull: false },
   onDelete: "RESTRICT",
 });
-db.directionStation.belongsTo(db.direction);
+db.travelDetail.belongsTo(db.travel);
+
+db.direction.hasMany(db.directionDetail, {
+  foreignKey: { allowNull: false },
+  onDelete: "RESTRICT",
+});
+db.directionDetail.belongsTo(db.direction);
 
 db.direction.hasMany(db.travel, {
   foreignKey: { allowNull: false },
@@ -63,31 +73,31 @@ db.direction.hasMany(db.travel, {
 });
 db.travel.belongsTo(db.direction);
 
-db.city.hasMany(db.directionStation, {
+db.city.hasMany(db.directionDetail, {
   foreignKey: { allowNull: false },
   onDelete: "RESTRICT",
 });
-db.directionStation.belongsTo(db.city);
+db.directionDetail.belongsTo(db.city);
 
-db.city.hasMany(db.travel, {
+db.city.hasMany(db.travelDetail, {
   foreignKey: "destinationId",
   as: "destination",
   allowNull: false,
   onDelete: "RESTRICT",
 });
-db.travel.belongsTo(db.city, {
+db.travelDetail.belongsTo(db.city, {
   foreignKey: "destinationId",
   as: "destination",
   allowNull: false,
   onDelete: "RESTRICT",
 });
-db.city.hasMany(db.travel, {
+db.city.hasMany(db.travelDetail, {
   foreignKey: "sourceId",
   as: "source",
   allowNull: false,
   onDelete: "RESTRICT",
 });
-db.travel.belongsTo(db.city, {
+db.travelDetail.belongsTo(db.city, {
   foreignKey: "sourceId",
   as: "source",
   allowNull: false,

@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const DirectionStation = sequelize.define("direction_stations", {
+  const DirectionDetail = sequelize.define("direction_details", {
     distanceFromSource: {
       type: Sequelize.INTEGER,
     },
@@ -11,5 +11,5 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
-  return DirectionStation;
+  return DirectionDetail;
 };

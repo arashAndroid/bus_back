@@ -19,12 +19,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const db = require("./app/models");
 const Role = db.role;
 
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and Resync Db");
-  initial();
-});
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log("Drop and Resync Db");
+//   initial();
+// });
 
-// db.sequelize.sync();
+db.sequelize.sync();
 
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
@@ -36,7 +36,8 @@ require("./app/routes/BasicInformation/ticket.routes")(app);
 require("./app/routes/BasicInformation/travel.routes")(app);
 require("./app/routes/BasicInformation/user.routes")(app);
 require("./app/routes/BasicInformation/direction.routes")(app);
-require("./app/routes/BasicInformation/directionStation.routes")(app);
+require("./app/routes/BasicInformation/directionDetail.routes")(app);
+require("./app/routes/BasicInformation/travelDetail.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8085;

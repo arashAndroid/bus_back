@@ -1,26 +1,18 @@
 const db = require("../../models");
 const config = require("../../config/auth.config");
-const Travel = db.travel;
-const Bus = db.bus;
-const BusType = db.busType;
-const City = db.city;
-const Driver = db.driver;
 const TravelDetail = db.travelDetail;
-const Direction = db.direction;
-const DirectionDetail = db.directionDetail;
+const Travel = db.travel;
 
 const Op = db.Sequelize.Op;
-const { v1: uuidv1 } = require("uuid");
 
 exports.create = (req, res) => {
-  const travel = req.body;
-  console.log("Travel", travel);
-  travel.travelUID = uuidv1();
-
-  Travel.create(travel)
+  const travelDetail = req.body;
+  travelDetail.travelId = req.params.tid;
+  console.log("travelDetail", travelDetail);
+  TravelDetail.create(travelDetail)
     .then((data) => {
       res.status(200).send({
-        Message: "سفر با موفقیت ایجاد شد",
+        Message: "جزئیات-سفر با موفقیت ایجاد شد",
         Status: 201,
       });
     })
@@ -31,51 +23,37 @@ exports.create = (req, res) => {
       });
     });
 };
+exports.bulkCreate = (req, res) => {
+  const travelDetails = req.body;
+  console.log("travelDetail", travelDetails);
+  TravelDetail.bulkCreate(dataArray)
+    .then(() => {
+      return TravelDetail.findAll();
+    })
+    .then((travelDetailsAll) => {
+      console.log(travelDetailsAll);
+      res.status(200).send({
+        Message: "جزئیات-سفر‌ها با موفقیت ایجاد شدند",
+        Status: 201,
+      });
+    });
+};
 
 exports.getAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
-
-  const departureDatetime = req.query.departureDatetime;
-  if (departureDatetime) {
-    const dateStart = new Date(departureDatetime).setHours(0, 0, 0, 0);
-    const dateEnd = new Date(departureDatetime).setHours(23, 59, 59, 0);
-    console.log("dateStart ", dateStart);
-    console.log("dateEnd ", dateEnd);
+  const tid = req.params.tid;
+  var condition;
+  if (tid) {
     if (condition) {
-      condition.departureDatetime = {
-        [Op.gt]: dateStart,
-        [Op.lt]: dateEnd,
-      };
+      condition.travelId = tid;
     } else {
-      condition = {
-        departureDatetime: {
-          [Op.gt]: dateStart,
-          [Op.lt]: dateEnd,
-        },
-      };
+      condition = { travelId: tid };
     }
   }
 
-  Travel.findAll({
-    where: condition,
-    include: [
-      { model: TravelDetail },
-      { model: Bus, include: [{ model: BusType }] },
-      {
-        model: Direction,
-        include: [{ model: DirectionDetail, include: [{ model: City }] }],
-      },
-      { model: Driver },
-    ],
-    order: [
-      // ["Direction.DirectionDetail.arrivalTime", "ASC"],
-      [Direction, DirectionDetail, "arrivalTime", "ASC"],
-    ],
-  })
+  TravelDetail.findAll({ where: condition, include: [{ model: Travel }] })
     .then((data) => {
       res.status(200).send({
-        Message: "تمامی راننده‌ها با موفقیت دریافت شدند",
+        Message: "تمامی جزئیات-سفرها با موفقیت دریافت شدند",
         Status: 200,
         Data: data,
       });
@@ -91,17 +69,17 @@ exports.getAll = (req, res) => {
 exports.get = (req, res) => {
   const id = req.params.id;
 
-  Travel.findByPk(id)
+  TravelDetail.findByPk(id)
     .then((data) => {
       if (data != null) {
         res.status(200).send({
-          Message: "سفر با موفقیت دریافت شد",
+          Message: "جزئیات-سفر با موفقیت دریافت شد",
           Status: 200,
           Data: data,
         });
       } else {
         res.status(404).send({
-          Message: "سفر مورد نظر یافت نشد",
+          Message: "جزئیات-سفر مورد نظر یافت نشد",
           Status: 404,
         });
       }
@@ -116,20 +94,20 @@ exports.get = (req, res) => {
 
 exports.update = (req, res) => {
   const id = req.params.id;
-  const Travel = req.body;
+  const travelDetail = req.body;
 
-  Travel.update(Travel, {
+  TravelDetail.update(travelDetail, {
     where: { id: id },
   })
     .then((num) => {
       if (num == 1) {
         res.send({
-          Message: "سفر با موفقیت بروزرسانی شد",
+          Message: "جزئیات-سفر با موفقیت بروزرسانی شد",
           Status: 200,
         });
       } else {
         res.send({
-          Message: `سفر مورد نظر پیدا نشد`,
+          Message: `جزئیات-سفر مورد نظر پیدا نشد`,
           Status: 400,
         });
       }
@@ -145,18 +123,18 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Travel.destroy({
+  TravelDetail.destroy({
     where: { id: id },
   })
     .then((num) => {
       if (num == 1) {
         res.send({
-          Message: "سفر  با موفقیت حذف شد",
+          Message: "جزئیات-سفر  با موفقیت حذف شد",
           Status: 200,
         });
       } else {
         res.send({
-          message: `سفر مورد نظر پیدا نشد`,
+          message: `جزئیات-سفر مورد نظر پیدا نشد`,
         });
       }
     })
@@ -169,13 +147,13 @@ exports.delete = (req, res) => {
 };
 
 exports.deleteAll = (req, res) => {
-  Travel.destroy({
+  TravelDetail.destroy({
     where: {},
     truncate: false,
   })
     .then((nums) => {
       res.send({
-        Message: `${nums} سفر با موفقیت حذ شدند`,
+        Message: `${nums} جزئیات-سفر با موفقیت حذ شدند`,
         Status: 200,
       });
     })
