@@ -8,6 +8,7 @@ const Driver = db.driver;
 const TravelDetail = db.travelDetail;
 const Direction = db.direction;
 const DirectionDetail = db.directionDetail;
+var moment = require("moment");
 
 const Op = db.Sequelize.Op;
 const { v1: uuidv1 } = require("uuid");
@@ -37,12 +38,15 @@ exports.create = async (req, res) => {
               if (price < 0) {
                 price *= -1;
               }
+              var departureDatetime = moment(travelRes.departureDatetime)
+                .add(source.durationFromSource, "m")
+                .toDate();
               var travelDetail = {
                 travelId: travelRes.id,
                 status: 1,
                 sourceId: source.cityId,
                 destinationId: destination.cityId,
-                departureDatetime: source.arrivalTime,
+                departureDatetime: departureDatetime,
                 price: price,
               };
               await TravelDetail.create(travelDetail);
@@ -114,7 +118,8 @@ exports.getAll = (req, res) => {
     ],
     order: [
       // ["Direction.DirectionDetail.arrivalTime", "ASC"],
-      [Direction, DirectionDetail, "arrivalTime", "ASC"],
+      [Direction, DirectionDetail, "durationFromSource", "ASC"],
+      ["departureDateTime", "DESC"],
     ],
   })
     .then((data) => {

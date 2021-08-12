@@ -3,8 +3,8 @@ module.exports = (sequelize, Sequelize) => {
     distanceFromSource: {
       type: Sequelize.INTEGER,
     },
-    arrivalTime: {
-      type: Sequelize.DATE,
+    durationFromSource: {
+      type: Sequelize.INTEGER,
     },
     order: {
       type: Sequelize.INTEGER,
