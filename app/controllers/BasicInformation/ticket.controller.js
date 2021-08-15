@@ -8,12 +8,13 @@ const BusType = db.busType;
 const City = db.city;
 const Driver = db.driver;
 const User = db.user;
+const Direction = db.direction;
+const DirectionDetail = db.directionDetail;
 
 const Op = db.Sequelize.Op;
 
 exports.create = (req, res) => {
   const ticket = req.body;
-  console.log("ticket", ticket);
   Ticket.create(ticket)
     .then((data) => {
       Ticket.findAll({
@@ -40,6 +41,7 @@ exports.create = (req, res) => {
         ],
       })
         .then((data) => {
+          console.log("ticket created data", data[0]);
           res.status(200).send({
             Message: "بلیط با موفقیت ایجاد شد",
             Status: 200,
@@ -82,14 +84,21 @@ exports.getAll = (req, res) => {
     where: condition,
     include: [
       {
-        model: Travel,
+        model: TravelDetail,
         include: [
           { model: City, as: "source" },
           { model: City, as: "destination" },
-          { model: Bus, include: [{ model: BusType }] },
-          { model: Driver },
+          {
+            model: Travel,
+            include: [
+              { model: Bus, include: [{ model: BusType }] },
+              { model: Direction, include: [{ model: DirectionDetail }] },
+              { model: Driver },
+            ],
+          },
         ],
       },
+
       {
         model: User,
       },
