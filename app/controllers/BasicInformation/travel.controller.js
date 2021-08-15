@@ -108,7 +108,6 @@ exports.getAll = (req, res) => {
   Travel.findAll({
     where: condition,
     include: [
-      { model: TravelDetail },
       { model: Bus, include: [{ model: BusType }] },
       {
         model: Direction,

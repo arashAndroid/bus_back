@@ -2,6 +2,7 @@ const db = require("../../models");
 const config = require("../../config/auth.config");
 const Ticket = db.ticket;
 const Travel = db.travel;
+const TravelDetail = db.travelDetail;
 const Bus = db.bus;
 const BusType = db.busType;
 const City = db.city;
@@ -19,14 +20,20 @@ exports.create = (req, res) => {
         where: { id: data.id },
         include: [
           {
-            model: Travel,
+            model: TravelDetail,
             include: [
               { model: City, as: "source" },
               { model: City, as: "destination" },
-              { model: Bus, include: [{ model: BusType }] },
-              { model: Driver },
+              {
+                model: Travel,
+                include: [
+                  { model: Bus, include: [{ model: BusType }] },
+                  { model: Driver },
+                ],
+              },
             ],
           },
+
           {
             model: User,
           },

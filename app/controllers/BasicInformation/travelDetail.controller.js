@@ -3,6 +3,10 @@ const config = require("../../config/auth.config");
 const TravelDetail = db.travelDetail;
 const Travel = db.travel;
 const City = db.city;
+const BusType = db.busType;
+const Driver = db.driver;
+const Direction = db.direction;
+const Bus = db.bus;
 
 const Op = db.Sequelize.Op;
 
@@ -41,8 +45,8 @@ exports.bulkCreate = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-  const tid = req.params.tid;
   var condition;
+  const tid = req.params.tid;
   if (tid) {
     if (condition) {
       condition.travelId = tid;
@@ -55,6 +59,76 @@ exports.getAll = (req, res) => {
     where: condition,
     include: [
       { model: Travel },
+      { model: City, as: "source" },
+      { model: City, as: "destination" },
+    ],
+  })
+    .then((data) => {
+      res.status(200).send({
+        Message: "تمامی جزئیات-سفرها با موفقیت دریافت شدند",
+        Status: 200,
+        Data: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        Message: err.message || "خطای سرور",
+        Status: 500,
+      });
+    });
+};
+exports.search = (req, res) => {
+  var condition;
+  const departureDatetime = req.query.departureDatetime;
+  if (departureDatetime) {
+    const dateStart = new Date(departureDatetime).setHours(0, 0, 0, 0);
+    const dateEnd = new Date(departureDatetime).setHours(23, 59, 59, 0);
+    console.log("dateStart ", dateStart);
+    console.log("dateEnd ", dateEnd);
+    if (condition) {
+      condition.departureDatetime = {
+        [Op.gt]: dateStart,
+        [Op.lt]: dateEnd,
+      };
+    } else {
+      condition = {
+        departureDatetime: {
+          [Op.gt]: dateStart,
+          [Op.lt]: dateEnd,
+        },
+      };
+    }
+  }
+
+  console.log("req.params = ", req.params);
+  const sourceId = req.query.sourceId;
+  if (sourceId) {
+    if (condition) {
+      condition.sourceId = sourceId;
+    } else {
+      condition = { sourceId: sourceId };
+    }
+  }
+  const destinationId = req.query.destinationId;
+  if (destinationId) {
+    if (condition) {
+      condition.destinationId = destinationId;
+    } else {
+      condition = { destinationId: destinationId };
+    }
+  }
+  console.log("conditions = ", condition);
+
+  TravelDetail.findAll({
+    where: condition,
+    include: [
+      {
+        model: Travel,
+        include: [
+          { model: Bus, include: [{ model: BusType }] },
+          { model: Driver },
+        ],
+      },
       { model: City, as: "source" },
       { model: City, as: "destination" },
     ],

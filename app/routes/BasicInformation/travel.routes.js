@@ -10,34 +10,27 @@ module.exports = function (app) {
     next();
   });
 
+  app.post("/api/v1/travel", CityController.create, [
+    authJwt.verifyToken,
+    authJwt.isAdmin,
+  ]);
+  app.get("/api/v1/travel", CityController.getAll, [
+    authJwt.verifyToken,
+    authJwt.isAdmin,
+  ]);
+  app.get("/api/v1/travel/:id", CityController.get, [
+    authJwt.verifyToken,
+    authJwt.isAdmin,
+  ]);
+  app.put("/api/v1/travel/:id", CityController.update, [
+    authJwt.verifyToken,
+    authJwt.isAdmin,
+  ]);
 
-
-  app.post(
-    "/api/v1/Travel",
-    CityController.create,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
-  app.get(
-    "/api/v1/Travel",
-    CityController.getAll,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
-  app.get(
-    "/api/v1/Travel/:id",
-    CityController.get,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
-  app.put(
-    "/api/v1/Travel/:id",
-    CityController.update,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
-
-  app.delete(
-    "/api/v1/Travel/:id",
-    CityController.delete,
-    [authJwt.verifyToken, authJwt.isAdmin],
-  );
+  app.delete("/api/v1/travel/:id", CityController.delete, [
+    authJwt.verifyToken,
+    authJwt.isAdmin,
+  ]);
 
   // app.delete(
   //   "/api/v1/Travel",

@@ -122,11 +122,11 @@ db.driver.hasMany(db.travel, {
 });
 db.travel.belongsTo(db.driver);
 
-db.travel.hasMany(db.ticket, {
+db.travelDetail.hasMany(db.ticket, {
   foreignKey: { allowNull: false },
   onDelete: "RESTRICT",
 });
-db.ticket.belongsTo(db.travel);
+db.ticket.belongsTo(db.travelDetail);
 
 db.user.hasMany(db.ticket, {
   foreignKey: { allowNull: false },

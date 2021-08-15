@@ -24,6 +24,7 @@ module.exports = function (app) {
     authJwt.verifyToken,
     authJwt.isAdmin,
   ]);
+  app.get("/api/v1/travelDetail/", TravelDetailController.search, []);
   app.get("/api/v1/travelDetail/:tid/:id", TravelDetailController.get, [
     authJwt.verifyToken,
     authJwt.isAdmin,
