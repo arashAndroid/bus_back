@@ -1,5 +1,6 @@
 const db = require("../../models");
 const config = require("../../config/auth.config");
+// const Sequelize = require("sequelize");
 const Ticket = db.ticket;
 const Travel = db.travel;
 const TravelDetail = db.travelDetail;
@@ -69,22 +70,14 @@ exports.create = (req, res) => {
 };
 
 exports.getAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
-  const provinceId = req.query.provinceId;
-  if (provinceId) {
-    if (condition) {
-      condition.provinceId = provinceId;
-    } else {
-      condition = { provinceId: provinceId };
-    }
-  }
-
+  condition = req.query;
+  console.log("condition = ", condition);
   Ticket.findAll({
     where: condition,
     include: [
       {
         model: TravelDetail,
+        as: "travel_detail",
         include: [
           { model: City, as: "source" },
           { model: City, as: "destination" },
@@ -92,7 +85,14 @@ exports.getAll = (req, res) => {
             model: Travel,
             include: [
               { model: Bus, include: [{ model: BusType }] },
-              { model: Direction, include: [{ model: DirectionDetail }] },
+              {
+                model: Direction,
+                include: [
+                  {
+                    model: DirectionDetail,
+                  },
+                ],
+              },
               { model: Driver },
             ],
           },

@@ -1,12 +1,15 @@
 const db = require("../../models");
 const config = require("../../config/auth.config");
+
 const TravelDetail = db.travelDetail;
 const Travel = db.travel;
 const City = db.city;
 const BusType = db.busType;
 const Driver = db.driver;
 const Direction = db.direction;
+const DirectionDetail = db.directionDetail;
 const Bus = db.bus;
+const Ticket = db.ticket;
 
 const Op = db.Sequelize.Op;
 
@@ -127,17 +130,111 @@ exports.search = (req, res) => {
         include: [
           { model: Bus, include: [{ model: BusType }] },
           { model: Driver },
+          {
+            model: Direction,
+            include: { model: DirectionDetail, where: { cityId: sourceId } },
+          },
         ],
       },
       { model: City, as: "source" },
       { model: City, as: "destination" },
     ],
   })
-    .then((data) => {
+    .then(async (travelDetails) => {
+      console.log("travelDetails length = ", travelDetails.length);
+
+      for (let index = 0; index < travelDetails.length; index++) {
+        var sourceOrder;
+        var destinationOrder;
+        // travelDetails[index].capacity = capacity;
+        const travelDetail = travelDetails[index];
+        var capacity = travelDetail.travel.bus.capacity;
+        var source = await DirectionDetail.findAll({
+          where: { cityId: travelDetail.sourceId },
+        });
+        console.log("source = " + JSON.stringify(source));
+        sourceOrder = source[0].order;
+        var destination = await DirectionDetail.findAll({
+          where: { cityId: travelDetail.destinationId },
+        });
+        destinationOrder = destination[0].order;
+        console.log(
+          "sourceOrder = " +
+            sourceOrder +
+            "destinationOrder = " +
+            destinationOrder
+        );
+        var tickets = await Ticket.findAll({
+          where: {
+            "$travel_detail.travelId$": travelDetail.travelId,
+          },
+          include: [
+            {
+              model: TravelDetail,
+              as: "travel_detail",
+              include: [
+                { model: City, as: "source" },
+                { model: City, as: "destination" },
+                {
+                  model: Travel,
+                  include: [
+                    { model: Bus, include: [{ model: BusType }] },
+                    {
+                      model: Direction,
+                      include: [
+                        {
+                          model: DirectionDetail,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        });
+        var seatsTaken = 0;
+        for (let i = 0; i < tickets.length; i++) {
+          const ticket = tickets[i];
+          var ticketSourceId = ticket.travel_detail.sourceId;
+          var ticketDestinationId = ticket.travel_detail.destinationId;
+          var ticketSourceOrder;
+          var ticketDestinationOrder;
+          var directionDetails =
+            ticket.travel_detail.travel.direction.direction_details;
+          for (let j = 0; j < directionDetails.length; j++) {
+            const directionDetail = directionDetails[j];
+            if (directionDetail.cityId == ticketSourceId) {
+              ticketSourceOrder = directionDetail.order;
+            }
+            if (directionDetail.cityId == ticketDestinationId) {
+              ticketDestinationOrder = directionDetail.order;
+            }
+          }
+          console.log(
+            "ticketSourceOrder = " +
+              ticketSourceOrder +
+              "ticketDestinationOrder = " +
+              ticketDestinationOrder
+          );
+          if (
+            ticketDestinationOrder > sourceOrder &&
+            destinationOrder > ticketSourceOrder
+          ) {
+            seatsTaken++;
+          }
+        }
+        capacity = capacity - seatsTaken;
+
+        console.log("travelDetails = ", travelDetails);
+        travelDetails[index].dataValues.capacity = capacity;
+        console.log("travelDetails 2 = ", travelDetails);
+        console.log("capacity = " + capacity);
+      }
       res.status(200).send({
         Message: "تمامی جزئیات-سفرها با موفقیت دریافت شدند",
         Status: 200,
-        Data: data,
+        Data: travelDetails,
       });
     })
     .catch((err) => {
@@ -246,3 +343,5 @@ exports.deleteAll = (req, res) => {
       });
     });
 };
+
+function getCityOrder(cityId, directionId) {}
