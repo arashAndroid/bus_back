@@ -1,5 +1,5 @@
 const { authJwt } = require("../../middleware");
-const CityController = require("../../controllers/BasicInformation/Travel.controller.js");
+const CityController = require("../../controllers/BasicInformation/travel.controller.js");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {

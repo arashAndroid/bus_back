@@ -49,6 +49,7 @@ exports.create = async (req, res) => {
                 departureDatetime: departureDatetime,
                 price: price,
               };
+              console.log("travelDetail create = ", travelDetail);
               await TravelDetail.create(travelDetail);
               // TravelDetail.create(travelDetail)
               //   .then((data) => {})
