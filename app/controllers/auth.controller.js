@@ -39,11 +39,9 @@ exports.signup = (req, res) => {
                 userName: user.username,
                 email: user.email,
                 first_name: user.username,
-                fullname: user.username,
                 last_name: user.username,
                 national_code: user.username,
                 credit: user.cash,
-                roles: authorities,
                 accessToken: token,
                 gender: 1,
               },
@@ -54,20 +52,16 @@ exports.signup = (req, res) => {
         // user role = 1
         user.setRoles([1]).then(() => {
           res.status(200).send({
-            msg: "ثبت نام با موفقیت انجام شد",
-            status: "200",
+            message: "ثبت نام با موفقیت انجام شد",
             data: {
               id: user.id,
-              userName: user.username,
+              username: user.username,
               email: user.email,
-              first_name: user.username,
-              fullname: user.username,
-              last_name: user.username,
-              national_code: user.username,
+              firstName: user.username,
+              lastName: user.username,
+              nationalCode: user.username,
               credit: user.cash,
-              roles: authorities,
               accessToken: token,
-              gender: 1,
             },
           });
         });
@@ -101,7 +95,6 @@ exports.signin = (req, res) => {
         return res.status(401).send({
           accessToken: null,
           message: "رمزعبور اشتباه است",
-          status: "401",
         });
       }
 
@@ -115,20 +108,16 @@ exports.signin = (req, res) => {
           authorities.push("ROLE_" + roles[i].name.toUpperCase());
         }
         res.status(200).send({
-          msg: "Login Successful",
-          status: "200",
+          message: "Login Successful",
           data: {
             id: user.id,
-            userName: user.username,
+            username: user.username,
             email: user.email,
-            first_name: user.username,
-            fullname: user.username,
-            last_name: user.username,
-            national_code: user.username,
+            firstName: user.username,
+            lastName: user.username,
+            nationalCode: user.username,
             credit: user.cash,
-            roles: authorities,
             accessToken: token,
-            gender: 1,
             accessTokenExpireTime: TimeStampToDate(
               date.setDate(date.getDate() + 30)
             ),
